@@ -1,0 +1,24 @@
+# QA CAMPO – APLICACIÓN INSTALABLE (PWA)
+
+Este paquete conserva el checklist original V6: Zona 1 (enrocado), Zonas 3 y 7 (núcleo), datos de supervisor y cota, marcado C/NC/NA, historial y exportaciones.
+
+## Para ponerla a disposición del equipo
+
+Los archivos deben publicarse JUNTOS en un sitio HTTPS. Ejemplo: repositorio de GitHub Pages o alojamiento web corporativo. Subir el contenido de esta carpeta SIN modificar los nombres. No basta con enviar por WhatsApp el HTML o abrirlo desde Archivos: así NO se instala como PWA ni funcionará el service worker.
+
+En GitHub Pages: crear repositorio, cargar index.html, manifest.webmanifest, service-worker.js, icon-192.png, icon-512.png; ir a Settings > Pages > Deploy from a branch > main / root; abrir la URL HTTPS publicada.
+
+## Instalación en Android
+
+1. Abrir la URL HTTPS publicada en Chrome.
+2. Pulsar “Instalar QA Campo en este celular” si aparece, o menú ⋮ > Instalar aplicación / Añadir a pantalla principal (según navegador).
+3. Abrir QA Campo desde el ícono instalado. Tras la primera carga completa, funciona sin señal para completar y guardar registros locales.
+
+## Advertencias operativas
+
+- Cada celular guarda SUS PROPIOS registros localmente: NO hay sincronización, servidor, cuentas de usuario ni repositorio central.
+- Exportar periódicamente CSV y respaldo JSON. Evitar borrar los datos del sitio o desinstalar sin respaldo.
+- Los datos de la antigua V6 abierta como archivo local no se transfieren automáticamente a la versión publicada. Exportar/importar JSON desde V6 si es posible.
+- La aplicación no es un APK ni ha sido publicada en Google Play; es una PWA instalable mediante un enlace HTTPS.
+- La publicación de un sitio público puede exponer las preguntas y el código. Para distribución interna usar hosting privado/corporativo con autorización TI.
+- El almacenamiento en navegadores personales no es un repositorio documental controlado: definir la política interna de protección de datos antes del despliegue.

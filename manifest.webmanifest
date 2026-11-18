@@ -1,0 +1,27 @@
+{
+  "id": "./index.html",
+  "name": "QA Campo – Presas Auxiliares",
+  "short_name": "QA Campo",
+  "description": "Inspecciones QA de Zona 1 y núcleos Zona 3/7 en presas auxiliares",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eff3f6",
+  "theme_color": "#122b42",
+  "lang": "es-PE",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
