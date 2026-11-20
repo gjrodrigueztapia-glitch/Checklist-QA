@@ -10,9 +10,28 @@ body:has(#type option[value="rock"]:checked) #zoneField{display:none!important}
 body:has(#type option[value="rock"]:checked) #questions .static-form[data-form="core"]{display:none}
 body:has(#type option[value="rock"]:checked) #questions .static-form[data-form="rock"]{display:block}
 #checklistHeader .zone-label{font-weight:700;color:#1e506a;margin-top:7px}
+
+/* Ficha imprimible del registro en pantalla: encabezado + metadatos visibles solo al imprimir */
+#printSheetHeader{display:none}
+@media print{
+ @page{size:A4 landscape;margin:12mm}
+ #printSheetHeader{display:block!important;border:1px solid #b9c6d1;padding:0;margin:0 0 10px;break-inside:avoid}
+ #printSheetHeader .ph-title{background:#122b42;color:#fff;font-weight:750;font-size:17px;padding:10px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #printSheetHeader .ph-subtitle{padding:7px 12px;font-size:12px;font-weight:700;border-bottom:1px solid #b9c6d1}
+ #printSheetHeader .ph-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+ #printSheetHeader .ph-item{padding:6px 9px;border-right:1px solid #ccd5db;border-bottom:1px solid #ccd5db;font-size:11px;min-height:36px}
+ #printSheetHeader .ph-item span{display:block;font-size:9px;color:#566b77}
+ #printSheetHeader .ph-item b{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+ #checklistHeader{padding:8px!important}
+ #checklistHeader p{display:none!important}
+ #questions .choices label:not(:has(input:checked)){color:#aaa;border-color:#ddd}
+ #questions .choices label:has(input:checked){border:2px solid #122b42;color:#122b42;font-weight:900}
+ .step{margin-bottom:7px}.step h3{padding:7px 9px}.question{padding:7px 9px}
+}
 </style></head><body>
 <header><div class="wrap"><h1>QA Campo <span style="font-size:14px;color:#91d0ca">| Presas Auxiliares</span></h1><p>Depósito de Relaves Linga · Lista de verificación en campo</p></div></header>
 <main class="wrap">
+<div id="printSheetHeader" aria-hidden="true"><div class="ph-title">QA CAMPO | PRESAS AUXILIARES</div><div class="ph-subtitle" id="phChecklist">CHECKLIST QA – Inspección de campo</div><div class="ph-grid" id="phFields"></div></div>
 <section class="box" id="intro"><div class="toolbar print-hide" style="margin-bottom:12px"><button type="button" id="installApp" class="dark" style="display:none">Instalar QA Campo en este celular</button></div><h2>Nuevo registro</h2><p class="sub" style="margin-bottom:12px">Primero seleccione la zona y complete los datos. Después marque los puntos de inspección.</p><a href="#checklistHeader" style="display:inline-block;background:#f39a31;color:#152333;padding:11px 14px;text-decoration:none;font-weight:700;border-radius:9px;margin-bottom:13px">Ver checklist y marcar controles ↓</a><div class="fields">
 <div class="full"><label class="field" for="inspector">Supervisor QA</label><input id="inspector" placeholder="Nombre y apellido"></div>
 <div class="full"><label class="field" for="type">Checklist</label><select id="type"><option value="core">Núcleo · Zona 3 / Zona 7</option><option value="rock">Enrocado · Zona 1</option></select></div>
@@ -86,7 +105,14 @@ $('exportCsv').onclick=()=>{if(!records.length){alert('No hay inspecciones guard
 $('exportJson').onclick=()=>download('QA_Respaldo_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({version:1,records},null,2),'application/json');
 $('importButton').onclick=()=>$('importFile').click();
 $('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.records))throw Error('Formato de respaldo no válido');if(!confirm(`¿Importar ${data.records.length} registros? Los registros con igual identificador se actualizarán.`))return;const map=new Map(records.map(x=>[x.id,x]));for(const r of data.records){if(r.id&&r.values&&r.answers&&FORMS[r.values.type])map.set(r.id,r);}records=[...map.values()];localStorage.setItem(RECORDS_KEY,JSON.stringify(records));renderHistory();alert('Respaldo importado.');}catch(ex){alert('No se pudo importar: '+ex.message);}e.target.value='';};
-$('save').onclick=save;$('saveBottom').onclick=save;$('new').onclick=startNew;$('print').onclick=()=>window.print();
+function updatePrintHeader(){
+ const v=values(),form=FORMS[v.type]||FORMS.core;
+ $('phChecklist').textContent=`Depósito de Relaves Linga · CHECKLIST QA – ${form.label}`;
+ const data=[['Supervisor QA',v.inspector],['Presa auxiliar',v.dam],['Zona',`Zona ${v.zone}`],['Fecha',v.date],['Turno',v.shift],['Capa N.º',v.layer],['Sector / progresiva',v.sector],['Cota (m s. n. m.)',v.cota],['Estado de inspección',count().status]];
+ $('phFields').innerHTML=data.map(([k,val])=>`<div class="ph-item"><span>${esc(k)}</span><b>${esc(val||'—')}</b></div>`).join('');
+}
+window.addEventListener('beforeprint',updatePrintHeader);
+$('save').onclick=save;$('saveBottom').onclick=save;$('new').onclick=startNew;$('print').onclick=()=>{updatePrintHeader();window.print();};
 $('date').value=new Date().toLocaleDateString('en-CA');
 try{const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');if(d?.values?.type&&FORMS[d.values.type]){$('type').value=d.values.type;typeChanged();for(const [k,v] of Object.entries(d.values))if($(k))$(k).value=v;currentId=d.id;answers=d.answers||{};observations=d.observations||{};}}catch{}
 syncZoneOptions();
